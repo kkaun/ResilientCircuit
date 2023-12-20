@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CreepController : MonoBehaviour
@@ -34,11 +32,12 @@ public class CreepController : MonoBehaviour
 
     void Start()
     {
-        playerCreepsIntroInteraction = GameObject.Find("CreepsIntroInteraction").GetComponent<PlayerCreepsIntroInteraction>();
+        playerCreepsIntroInteraction = GameObject.Find("CreepsIntroInteraction")
+            .GetComponent<PlayerCreepsIntroInteraction>();
 
         animator = GetComponent<Animator>();
 
-        health = 15f;
+        health = 23f;
 
         StartCoroutine(SoundTask(10f));
     }
@@ -49,6 +48,8 @@ public class CreepController : MonoBehaviour
             && player.GetComponent<PlayerController>().IsInConflict()
             && !ShouldBeDead())
         {
+            transform.LookAt(player.transform);
+
             if (IsEnoughDistanceForCombat())
             {
                 PerformRandomAttack();
@@ -77,9 +78,6 @@ public class CreepController : MonoBehaviour
     private void PursuePlayer()
     {
         animator.SetTrigger(nameof(MonsterCombatActions.Walk_Cycle_2));
-
-        Vector3 lookDirection = (player.transform.position - transform.position).normalized;
-        transform.LookAt(lookDirection);
 
         float step = moveSpeed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
@@ -118,7 +116,10 @@ public class CreepController : MonoBehaviour
 
     private void CheckForDamageTaken(Collider other)
     {
-        if (player.GetComponent<PlayerController>().IsInConflict()
+        bool isPlayerAttacking = player.GetComponent<PlayerController>().IsAttacking();
+
+        if (isPlayerAttacking
+            && player.GetComponent<PlayerController>().IsInConflict()
             && playerCreepsIntroInteraction.isInConflict
             && IsEnoughDistanceForCombat()
             && other.gameObject.CompareTag("PlayerWeapon"))

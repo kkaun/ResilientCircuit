@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelGateController : MonoBehaviour
@@ -7,10 +5,9 @@ public class LevelGateController : MonoBehaviour
     private IntroLevelObjectivesManager introLevelObjectivesManager;
 
     private float slideSpeed = 0.015f;
-    private float slideLimitX = 15.0f;
     private float counter = 0;
-    private float slideDuration = 1.5f;
-
+    private float slideDuration = 1.8f;
+    private bool playedSound = false;
 
     private void Start()
     {
@@ -20,11 +17,17 @@ public class LevelGateController : MonoBehaviour
 
     void Update()
     {
-        if(counter < slideDuration)
-        //if (introLevelObjectivesManager.IsStage2TaskResolved())
+        if(counter < slideDuration && introLevelObjectivesManager.IsStage2TaskResolved())
         {
             OpenGateSlowly();
             counter += Time.deltaTime;
+
+            if (!playedSound)
+            {
+                AudioClip clip = Resources.Load<AudioClip>("Sounds/Gate/GateOpeningSound");
+                GetComponent<AudioSource>().PlayOneShot(clip);
+                playedSound = true;
+            }
         }
     }
 

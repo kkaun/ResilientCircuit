@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MonologueIntroLevelManager : MonoBehaviour
 {
-    private SceneManager sceneManager;
+    private LevelSceneManager sceneManager;
 
     private LevelFlowManager levelFlowManager;
 
@@ -23,7 +23,7 @@ public class MonologueIntroLevelManager : MonoBehaviour
     {
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
 
-        sceneManager = GameObject.Find("SceneManager").GetComponent<SceneManager>();
+        sceneManager = GameObject.Find("SceneManager").GetComponent<LevelSceneManager>();
 
         levelFlowManager = GameObject.Find("LevelFlowManager").GetComponent<LevelFlowManager>();
 

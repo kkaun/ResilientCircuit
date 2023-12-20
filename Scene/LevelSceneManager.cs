@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-public class SceneManager : MonoBehaviour
+public class LevelSceneManager : MonoBehaviour
 {
     public TextMeshProUGUI dialogText;
     public TextMeshProUGUI dialogTitle;
@@ -18,8 +16,6 @@ public class SceneManager : MonoBehaviour
 
     public TextMeshProUGUI healthIndicator;
     public TextMeshProUGUI gameMechanicsHint;
-
-    private static string playerHealthIndicationText = "Integrity: ";
 
     void Start()
     {
@@ -113,7 +109,7 @@ public class SceneManager : MonoBehaviour
 
     public void UpdateHeathIndicator(float health)
     {
-        healthIndicator.text = playerHealthIndicationText + health.ToString();
+        healthIndicator.text = health.ToString();
     }
 
     public void SetMechanicsHintText(string hint)

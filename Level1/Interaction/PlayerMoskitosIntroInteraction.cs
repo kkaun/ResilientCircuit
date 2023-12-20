@@ -6,7 +6,7 @@ public class PlayerMoskitosIntroInteraction : MonoBehaviour
 {
     public GameObject player;
 
-    public SceneManager sceneManager;
+    public LevelSceneManager sceneManager;
 
     public List<GameObject> moskitos;
 

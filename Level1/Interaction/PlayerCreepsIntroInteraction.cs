@@ -6,7 +6,7 @@ public class PlayerCreepsIntroInteraction : MonoBehaviour
 {
     public GameObject player;
 
-    public SceneManager sceneManager;
+    public LevelSceneManager sceneManager;
 
     public List<GameObject> creeps;
 
@@ -78,6 +78,9 @@ public class PlayerCreepsIntroInteraction : MonoBehaviour
 
     private void StartFight()
     {
+        GameObject.Find("CrabMonster")
+            .GetComponent<PlayerMonsterIntroInteraction>().isInConflict = false;
+
         sceneManager.DeactivateDecisionButtons();
         sceneManager.DeactivateDialogContent();
 
@@ -86,7 +89,6 @@ public class PlayerCreepsIntroInteraction : MonoBehaviour
 
         isInDialogue = false;
         isInConflict = true;
-
     }
 
     private void LeaveInPeace()

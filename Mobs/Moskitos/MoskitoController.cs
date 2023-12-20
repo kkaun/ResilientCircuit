@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MoskitoController : MonoBehaviour
@@ -16,8 +15,8 @@ public class MoskitoController : MonoBehaviour
 
     private float health;
 
-    public const float damage = 1f;
-    private const float moveSpeed = 2f;
+    public const float damage = 2f;
+    private const float moveSpeed = 1.5f;
 
     private float distanceToPlayer;
     public const float maxFightDistanceToPlayer = 1.0f;
@@ -37,7 +36,7 @@ public class MoskitoController : MonoBehaviour
 
         animator = GetComponent<Animator>();
 
-        health = 16f;
+        health = 18f;
 
         StartCoroutine(SoundTask(3f));
     }
@@ -48,6 +47,8 @@ public class MoskitoController : MonoBehaviour
             && playerMoskitosIntroInteraction.isInConflict  
             && !ShouldBeDead())
         {
+            transform.LookAt(player.transform);
+
             if (IsEnoughDistanceForCombat())
             {
                 PerformRandomAttack();
@@ -75,11 +76,6 @@ public class MoskitoController : MonoBehaviour
 
     private void PursuePlayer()
     {
-        Vector3 lookDirection = (player.transform.position - transform.position).normalized;
-
-        transform.LookAt(lookDirection);
-        transform.Rotate(lookDirection);
-
         float step = moveSpeed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
     }
@@ -114,7 +110,10 @@ public class MoskitoController : MonoBehaviour
 
     private void CheckForDamageTaken(Collider other)
     {
-        if (player.GetComponent<PlayerController>().IsInConflict()
+        bool isPlayerAttacking = player.GetComponent<PlayerController>().IsAttacking();
+
+        if (isPlayerAttacking
+            && player.GetComponent<PlayerController>().IsInConflict()
             && playerMoskitosIntroInteraction.isInConflict
             && IsEnoughDistanceForCombat()
             && other.gameObject.CompareTag("PlayerWeapon"))

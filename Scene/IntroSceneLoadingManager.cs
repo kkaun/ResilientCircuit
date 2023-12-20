@@ -1,9 +1,8 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
-public class SceneLoadingManager : MonoBehaviour
+public class IntroSceneLoadingManager : MonoBehaviour
 {
     public TextMeshProUGUI loadingText;
 
@@ -21,13 +20,11 @@ public class SceneLoadingManager : MonoBehaviour
     {
         AsyncOperation operation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneId);
 
-        //loadingScreen.SetActive(true);
-
         while (!operation.isDone)
         {
             float progressValue = Mathf.Clamp01(operation.progress / 0.9f);
 
-            Debug.Log("PROGRESS: " + progressValue);
+            //Debug.Log("Loading scene progress: " + progressValue);
 
             loadingText.text = "Loading: " + progressValue * 100 + "%";
 

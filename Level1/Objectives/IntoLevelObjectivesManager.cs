@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class IntroLevelObjectivesManager : MonoBehaviour
 {
@@ -11,7 +10,7 @@ public class IntroLevelObjectivesManager : MonoBehaviour
 
     void Start()
     {
-        //optStage0AlreadyInteracted = false;
+        optStage0AlreadyInteracted = false;
         stage1AlreadyInteracted = false;
         stage1TaskResolved = false;
         stage2TaskResolved = false;
@@ -23,31 +22,26 @@ public class IntroLevelObjectivesManager : MonoBehaviour
 
     public void SetOptStage0AsInteracted()
     {
-        Debug.Log("STAGE 0 INTERACTED");
         optStage0AlreadyInteracted = true;
     }
 
     public bool IsOptStage0Interacted()
     {
-        //Debug.Log("IsOptStage0Interacted: " + optStage0AlreadyInteracted);
         return optStage0AlreadyInteracted;
     }
 
     public void SetStage1AsInteracted()
     {
-        Debug.Log("STAGE 1 INTERACTED");
         stage1AlreadyInteracted = true;
     }
 
     public bool IsStage1Interacted()
     {
-        //Debug.Log("stage1AlreadyInteracted: " + stage1AlreadyInteracted);
         return stage1AlreadyInteracted;
     }
 
     public void SetStage1TaskAsResolved()
     {
-        Debug.Log("STAGE 1 RESOLVED");
         stage1TaskResolved = true;
     }
 
@@ -58,7 +52,6 @@ public class IntroLevelObjectivesManager : MonoBehaviour
 
     public void SetStage2TaskAsResolved()
     {
-        Debug.Log("STAGE 2 RESOLVED");
         stage2TaskResolved = true;
     }
 

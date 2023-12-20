@@ -7,7 +7,7 @@ public class PlayerHumanIntroInteraction : MonoBehaviour
 {
     public GameObject player;
 
-    public SceneManager sceneManager;
+    public LevelSceneManager sceneManager;
 
     public List<GameObject> humans;
 

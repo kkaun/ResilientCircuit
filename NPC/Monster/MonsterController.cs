@@ -1,10 +1,11 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MonsterController : MonoBehaviour {
 
     public GameObject player;
+
+    public GameObject atm1;
 
     //By adding new levels, may add more interaction scripts as more separated modules
     //and switch them by checking current level
@@ -14,7 +15,7 @@ public class MonsterController : MonoBehaviour {
 
     private float health;
 
-    public const float damage = 3f;
+    public const float damage = 4f;
 	private const float maxRotationSpeed = 12.0f;
     private const float moveSpeed = 2f;
 
@@ -32,9 +33,11 @@ public class MonsterController : MonoBehaviour {
 
         animator = GetComponent<Animator>();
 
-        health = 25f;
+        health = 31f;
 
-        isAllowedToTalk = false;
+        isAllowedToTalk = true;
+        animator.SetBool("IsAlive", true);
+
         StartCoroutine(SoundTask(8f));
     }
 	
@@ -44,6 +47,8 @@ public class MonsterController : MonoBehaviour {
             && player.GetComponent<PlayerController>().IsInConflict()
             && !ShouldBeDead())
         {
+            transform.LookAt(player.transform);
+
             if (playerMonsterIntroInteraction.IsEnoughDistanceForCombat())
             {
                 PerformRandomAttack();
@@ -61,9 +66,6 @@ public class MonsterController : MonoBehaviour {
     private void PursuePlayer()
     {
         animator.SetTrigger(nameof(MonsterCombatActions.Walk_Cycle_2));
-
-        Vector3 lookDirection = (player.transform.position - transform.position).normalized;
-        transform.LookAt(lookDirection);
 
         float step = moveSpeed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
@@ -102,7 +104,10 @@ public class MonsterController : MonoBehaviour {
 
     private void CheckForDamageTaken(Collider other)
     {
-        if (player.GetComponent<PlayerController>().IsInConflict()
+        bool isPlayerAttacking = player.GetComponent<PlayerController>().IsAttacking();
+
+        if (isPlayerAttacking
+            && player.GetComponent<PlayerController>().IsInConflict()
             && playerMonsterIntroInteraction.isInConflict
             && playerMonsterIntroInteraction.IsEnoughDistanceForCombat()
             && other.gameObject.CompareTag("PlayerWeapon"))
@@ -164,20 +169,37 @@ public class MonsterController : MonoBehaviour {
 	public void ShowExcitement()
     {
 		animator.SetTrigger(nameof(MonsterCombatActions.Take_Damage_3));
-	}
+        animator.SetBool("IsTalking", true);
+    }
 
     public void PrepareForInteraction()
     {
         Vector3 targetDirection = player.transform.position - transform.position;
         Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+
         transform.rotation = Quaternion.Slerp(
             transform.rotation, targetRotation, maxRotationSpeed * Time.deltaTime);
 
-        // Check if the rotation is almost complete
         float angleDifference = Quaternion.Angle(transform.rotation, targetRotation);
         if (angleDifference < 1.0f)
         {
             ShowExcitement();
+        }
+    }
+
+    public void EndInteraction()
+    {
+        Vector3 targetDirection = atm1.transform.position - transform.position;
+        Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation, targetRotation, maxRotationSpeed * Time.deltaTime);
+
+        float angleDifference = Quaternion.Angle(transform.rotation, targetRotation);
+
+        if (angleDifference < 1.0f)
+        {
+            animator.SetBool("IsTalking", false);
         }
     }
 
@@ -206,6 +228,7 @@ public class MonsterController : MonoBehaviour {
             else if (playerMonsterIntroInteraction.isInDialogue && isAllowedToTalk)
             {
                 PlayRandomDialogueSound();
+                //CheckAndUpdateTalikngMovement();
             }
         }
 

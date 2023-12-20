@@ -5,7 +5,7 @@ using UnityEngine;
 public static class DialogueIntroTexts
 {
 
-    private const float dialogSpeedMultplier = 0.08f;
+    private const float dialogSpeedMultplier = 0.6f;
 
     public static List<KeyValuePair<string, float>> playerStartMonologue; //Start
     public static List<KeyValuePair<string, float>> atm2ToFixMonologue;

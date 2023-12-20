@@ -7,7 +7,7 @@ public class PlayerMonsterIntroInteraction : MonoBehaviour
 {
     public GameObject player;
 
-    public SceneManager sceneManager;
+    public LevelSceneManager sceneManager;
 
     public GameObject miniReactor;
 
@@ -70,6 +70,8 @@ public class PlayerMonsterIntroInteraction : MonoBehaviour
                 && !levelObjectivesManager.IsStage1TaskResolved())
             {
                 interactionPhase = 2;
+
+                monsterController.PrepareForInteraction();
                 ContinueMonsterInteraction();
             }
             UpdateDialogueContent();
@@ -148,8 +150,7 @@ public class PlayerMonsterIntroInteraction : MonoBehaviour
 
     private void AwakePhaseDialogue() 
     {
-        isInConflict = false;
-        isInDialogue = true;
+        //!
 
         List<IEnumerator> enumerators = new List<IEnumerator>();
 
@@ -157,6 +158,9 @@ public class PlayerMonsterIntroInteraction : MonoBehaviour
         {
             enumerators.Add(MonsterDialogueTask(i, interactionPhase));
         }
+
+        isInConflict = false;
+        isInDialogue = true;
 
         StartCoroutine(DialogueEnumeratorSequence(enumerators.ToArray()));
     }
@@ -167,17 +171,6 @@ public class PlayerMonsterIntroInteraction : MonoBehaviour
         {
             currentDialogueStageDelay = GetTextsForCurrentDialogue()[currentDialogueIdx].Value;
             currentDialogueStr = GetTextsForCurrentDialogue()[currentDialogueIdx].Key;
-
-            if (GetTextsForCurrentDialogue()[currentDialogueIdx].Key == DialogueIntroTexts.switchDialogSideToMonster)
-            {
-                player.GetComponent<PlayerController>().RestrictTalkingAudio();
-                monsterController.AllowTalkingAudio();
-            }
-            if (GetTextsForCurrentDialogue()[currentDialogueIdx].Key == DialogueIntroTexts.switchDialogSideToPlayer)
-            {
-                player.GetComponent<PlayerController>().AllowTalkingAudio();
-                monsterController.RestrictTalkingAudio();
-            }
 
             if (GetTextsForCurrentDialogue()[currentDialogueIdx].Key == DialogueIntroTexts.endDialogMarker)
             {
@@ -235,11 +228,22 @@ public class PlayerMonsterIntroInteraction : MonoBehaviour
             if (currentDialogueStr == DialogueIntroTexts.switchDialogSideToPlayer)
             {
                 sceneManager.SetDialogTitle(DialogueIntroTexts.playerDialogTitle);
+
+                player.GetComponent<PlayerController>().AllowTalkingAudio();
+                monsterController.RestrictTalkingAudio();
             }
             if (currentDialogueStr == DialogueIntroTexts.switchDialogSideToMonster)
             {
                 sceneManager.SetDialogTitle(DialogueIntroTexts.monsterDialogTitle);
+
+                player.GetComponent<PlayerController>().RestrictTalkingAudio();
+                monsterController.AllowTalkingAudio();
             }
+            if (currentDialogueStr == DialogueIntroTexts.endDialogMarker)
+            {
+                monsterController.EndInteraction();
+            }
+
         }
     }
 

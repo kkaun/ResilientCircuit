@@ -3,15 +3,16 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-	private SceneManager sceneManager;
+	private LevelSceneManager sceneManager;
 
 	private Animator animator;
 
 	private FollowPlayer followPlayer;
 
-	private const float initialHelth = 200f;
-	private const float maxHealth = 300f;
+	private const float initialHelth = 300f;
+	private const float maxHealth = 350f;
 	private float health;
+
 	public const float damage = 2f;
 
 	private bool isInConflict;
@@ -26,7 +27,7 @@ public class PlayerController : MonoBehaviour
 		animator = GetComponent<Animator>();
 
 		followPlayer = GameObject.Find("Main Camera").GetComponent<FollowPlayer>();
-		sceneManager = GameObject.Find("SceneManager").GetComponent<SceneManager>();
+		sceneManager = GameObject.Find("SceneManager").GetComponent<LevelSceneManager>();
 
 		OnGameStart();
 
@@ -50,7 +51,7 @@ public class PlayerController : MonoBehaviour
 	}
 
 	private void OnGameStart()
-    {
+	{
 		isInConflict = false;
 		isInStaticDialogue = false;
 		isAllowedToTalk = false;
@@ -65,10 +66,12 @@ public class PlayerController : MonoBehaviour
 	{
 		int randomAttackAnimIdx = Random.Range(0, 2);
 
-		if (randomAttackAnimIdx == 1) {
+		if (randomAttackAnimIdx == 1)
+		{
 			animator.SetTrigger(nameof(PlayerCombatActions.StrikeLow2));
 		}
-		else {
+		else
+		{
 			animator.SetTrigger(nameof(PlayerCombatActions.StrikeLow1));
 		}
 	}
@@ -76,20 +79,33 @@ public class PlayerController : MonoBehaviour
 	private void PerformHighAttack()
 	{
 		animator.SetTrigger(nameof(PlayerCombatActions.StrikeHigh));
-	}	
+	}
+
+	public bool IsAttacking()
+	{
+		return (animator.GetCurrentAnimatorStateInfo(0)
+			.IsName(nameof(PlayerCombatActions.StrikeLow1))
+				|| animator.GetCurrentAnimatorStateInfo(0)
+			.IsName(nameof(PlayerCombatActions.StrikeLow2))
+				|| animator.GetCurrentAnimatorStateInfo(0)
+			.IsName(nameof(PlayerCombatActions.StrikeHigh))
+			);
+	}
 
 	private void OnTriggerEnter(Collider other)
 	{
 		CheckCameraSwitch(other);
 		CheckForDamageTaken(other);
+		CheckLevelPass(other);
 	}
 
 	private void CheckForDamageTaken(Collider other)
 	{
-		if (isInConflict && !ShouldBeDead()) {
+		if (isInConflict && !ShouldBeDead())
+		{
 
-			switch(other.gameObject.tag)
-            {
+			switch (other.gameObject.tag)
+			{
 				case "MonsterWeapon":
 					ProcessDamage(MonsterController.damage);
 					break;
@@ -106,7 +122,7 @@ public class PlayerController : MonoBehaviour
 	}
 
 	private void ProcessDamage(float damage)
-    {
+	{
 		PlayCombatSmashSound();
 
 		TakeDamage(damage);
@@ -120,10 +136,11 @@ public class PlayerController : MonoBehaviour
 			int randomSufferAnimIdx = Random.Range(0, 2);
 
 			if (randomSufferAnimIdx == 0)
-            {
+			{
 				animator.SetTrigger(nameof(PlayerCombatActions.TakeDamage1));
-			} else
-            {
+			}
+			else
+			{
 				animator.SetTrigger(nameof(PlayerCombatActions.TakeDamage2));
 			}
 		}
@@ -135,11 +152,11 @@ public class PlayerController : MonoBehaviour
 
 		isInConflict = false;
 
-		//TODO game over within SceneController
+		GetComponent<GameManager>().GoToDeathMenu();
 	}
 
 	private void CheckCameraSwitch(Collider other)
-    {
+	{
 		if (other.CompareTag("SwitchCameraTrigger"))
 		{
 			SwitchCameraCollider switchCamera =
@@ -148,6 +165,16 @@ public class PlayerController : MonoBehaviour
 			CameraDirection updatedDirection = switchCamera.triggersCameraDirection;
 
 			followPlayer.SetCameraDirection(updatedDirection);
+		}
+	}
+
+	private void CheckLevelPass(Collider other)
+	{
+		//TODO check level objectives as additional pass point
+		//TODO add next level transition when ready
+		if (other.CompareTag("Finish"))
+		{
+			GetComponent<GameManager>().GoToEndLevelMenu();
 		}
 	}
 
@@ -162,9 +189,9 @@ public class PlayerController : MonoBehaviour
 	}
 
 	public void FulfillHealthToMax()
-    {
+	{
 		health = maxHealth;
-    }
+	}
 
 	public void MaintainConflictWithNPC()
 	{
@@ -184,26 +211,26 @@ public class PlayerController : MonoBehaviour
 	}
 
 	public bool IsInStaticDialogue()
-    {
+	{
 		return isInStaticDialogue;
-    }
+	}
 
 	public void StartStaticDialogue()
-    {
+	{
 		animator.SetBool(nameof(PlayerAnimStates.IsInStaticDialog), true);
 		isInStaticDialogue = true;
 		AllowTalkingAudio();
-    }
+	}
 
 	public void EndStaticDialogue()
-    {
+	{
 		animator.SetBool(nameof(PlayerAnimStates.IsInStaticDialog), false);
 		isInStaticDialogue = false;
 		RestrictTalkingAudio();
-    }
+	}
 
 	public void StartMalfunctioningState()
-    {
+	{
 		animator.SetBool(nameof(PlayerAnimStates.IsMalfunctioning), true);
 		animator.SetTrigger(nameof(PlayerCombatActions.Malfunction));
 	}
@@ -215,19 +242,19 @@ public class PlayerController : MonoBehaviour
 	}
 
 	public void AllowTalkingAudio()
-    {
+	{
 		isAllowedToTalk = true;
-    }
+	}
 
 	public void RestrictTalkingAudio()
-    {
+	{
 		isAllowedToTalk = false;
-    }
+	}
 
 	public void PlayCombatSmashSound()
-    {
+	{
 		if (!GetComponent<AudioSource>().isPlaying)
-        {
+		{
 			int randomSmashSound = Random.Range(1, 12); //number of sounds available
 
 			AudioClip clip = Resources.Load<AudioClip>("Sounds/Contacts/Smash" + randomSmashSound);

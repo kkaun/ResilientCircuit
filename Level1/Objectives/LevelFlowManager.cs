@@ -5,7 +5,7 @@ using UnityEngine;
 public class LevelFlowManager : MonoBehaviour
 {
 
-    public SceneManager sceneManager;
+    public LevelSceneManager sceneManager;
 
     public GameObject miniReactor;
 
