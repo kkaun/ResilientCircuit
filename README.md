@@ -1,7 +1,7 @@
 # Resilient Circuit
  Code samples from 3rd-person robotic adventure action being developed in Unity.
 
-The project is built in URP and uses occlusion culling.
+The project is built using URP, uses occlusion culling and some enviromental effects.
 
 Nearest plans are to modify the diloague/decision system with a flexible 3rd-party solution, as well to add some new levels, and to add dynamic lighting for a darker level.
 
